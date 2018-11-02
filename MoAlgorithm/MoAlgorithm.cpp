@@ -132,49 +132,61 @@ void printDQuery(Query a,Query b){
 	printQuery(b);
 }
 
+int modeArr;
+
 void insElement(int value){
+//	printf("\nInfo: %d - %d",value,Freq[value]);
 	sHash[Freq[value]].remove(value);
 	Freq[value] += 1;
-//	printf("\nFreq: %d",Freq[value]);
-
 	sHash[Freq[value]].add(value);
-	if(Freq[value]>maxMode)
-		maxMode = Freq[value];					
+	if(Freq[value]>maxMode){
+		maxMode = Freq[value];
+		modeArr = value;
+	}					
 }
 
 void delElement(int value){
 	sHash[Freq[value]].remove(value);
-			//	printf("\nShash:\n");
-			//	sHash[Freq[value]].printHash();
-	Freq[value] -= 1;
+	if(Freq[value]>0)
+		Freq[value] -= 1;
 	sHash[Freq[value]].add(value);
-			//	sHash[Freq[value]].printHash();
-
-	if(sHash[maxMode].isEmpty())
-		maxMode--;
-			
+	while (sHash[maxMode].isEmpty()&&maxMode>0)
+		maxMode--;			
 }
+
+void printsHash(){
+		sHash[1].printHash();
+		sHash[2].printHash();
+		sHash[3].printHash();
+}
+
 
 
 int getMode(Query preQ,Query curQ){
 	maxMode = 0;
+	modeArr = A[curQ.left];
 	printDQuery(preQ,curQ);
-	//printf("\nQuery 1: %d - %d \nQuery 2: %d - %d\n",preQ.left,preQ.right,curQ.left,curQ.right);
-	if(preQ.left<=curQ.left){
-		for(int i=preQ.left;i<curQ.left;i++){
+	if(preQ.left<=curQ.left)
+		for(int i=preQ.left;i<curQ.left;i++)
 			delElement(A[i]);
-		}
-		
-		
-			sHash[1].printHash();
-		
-		for(int i=preQ.right+1;i<curQ.right;i++){
+	else
+		for(int i=curQ.left;i<preQ.left;i++)
 			insElement(A[i]);
-		}
-			sHash[1].printHash();
+			
+	printsHash();
+	printf("\nBefore: Mode: %d --- Max: %d\n",modeArr,maxMode);
+	printf("\nAfter: \n");	
 	
-	}
-		printf("\nMax: %d\n",maxMode);
+	if(preQ.right<=curQ.right)	
+		for(int i=preQ.right+1;i<=curQ.right;i++)
+			insElement(A[i]);
+	else
+		for(int i=curQ.right+1;i<=preQ.right;i++)
+			delElement(A[i]);
+			
+	printsHash();
+			
+		printf("\nMode: %d --- Max: %d\n",modeArr,maxMode);
 	
 }
 
@@ -198,6 +210,8 @@ int main(){
 		sHash[Freq[A[i]]].add(A[i]);
 		
 	}
+	
+	//sHash[1].printHash();
 	
 	for(int i=0;i<Q-1;i++)
 		getMode(queries[i],queries[i+1]);

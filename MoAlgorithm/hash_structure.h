@@ -13,8 +13,10 @@ class HashMo {
 		vector<int> arr;
 		
 		void add(int x){
-			if(Map.find(x) != Map.end())
+			if(Map.find(x) != Map.end()){
+				printf(" Find %d - %d ",x,Map.at(x));
 				return;
+			}
 			int index = arr.size();
 			arr.push_back(x);
 			
@@ -29,17 +31,9 @@ class HashMo {
 			int index = Map.at(x);
 			Map.erase(x);
 			if(arr.size()>0){
-			int last = arr.size()-1;
+				int last = arr.size()-1;
 				swap(arr[index],arr[last]);
 				arr.pop_back();
-				if(search(arr[index])!=-1)
-					Map.at(arr[index]) = index;
-				else 
-					Map.insert(std::pair<int,int>(arr[index],index));
-
-				
-			} else {
-			//	arr.pop_back();
 			}
 		}
 		
