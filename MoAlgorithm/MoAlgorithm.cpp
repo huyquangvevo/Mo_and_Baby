@@ -138,6 +138,7 @@ void insElement(int value){
 //	printf("\nInfo: %d - %d",value,Freq[value]);
 	sHash[Freq[value]].remove(value);
 	Freq[value] += 1;
+//	printf("\nInsert: %d - %d",value,Freq[value]);
 	sHash[Freq[value]].add(value);
 	if(Freq[value]>maxMode){
 		maxMode = Freq[value];
@@ -150,8 +151,10 @@ void delElement(int value){
 	if(Freq[value]>0)
 		Freq[value] -= 1;
 	sHash[Freq[value]].add(value);
-	while (sHash[maxMode].isEmpty()&&maxMode>0)
-		maxMode--;			
+	while (sHash[maxMode].isEmpty()&&maxMode>0){
+		maxMode--;
+		modeArr = sHash[maxMode].arr[0];
+	}
 }
 
 void printsHash(){
@@ -163,7 +166,7 @@ void printsHash(){
 
 
 int getMode(Query preQ,Query curQ){
-	maxMode = 0;
+//	maxMode = 0;
 	modeArr = A[curQ.left];
 	printDQuery(preQ,curQ);
 	if(preQ.left<=curQ.left)
@@ -173,9 +176,9 @@ int getMode(Query preQ,Query curQ){
 		for(int i=curQ.left;i<preQ.left;i++)
 			insElement(A[i]);
 			
-	printsHash();
-	printf("\nBefore: Mode: %d --- Max: %d\n",modeArr,maxMode);
-	printf("\nAfter: \n");	
+//	printsHash();
+//	printf("\nBefore: Mode: %d --- Max: %d\n",modeArr,maxMode);
+//	printf("\nAfter: \n");	
 	
 	if(preQ.right<=curQ.right)	
 		for(int i=preQ.right+1;i<=curQ.right;i++)
@@ -184,7 +187,7 @@ int getMode(Query preQ,Query curQ){
 		for(int i=curQ.right+1;i<=preQ.right;i++)
 			delElement(A[i]);
 			
-	printsHash();
+//	printsHash();
 			
 		printf("\nMode: %d --- Max: %d\n",modeArr,maxMode);
 	
@@ -202,13 +205,9 @@ int main(){
 	printAll();
 	for(int i=0;i<n_max;i++)
 		Freq[i] = 0;
-//	for(int i=0;i<N;i++)
-//		Freq[A[i]] += 1;
 	
 	for(int i=queries[0].left;i<=queries[0].right;i++){
-		Freq[A[i]] += 1;
-		sHash[Freq[A[i]]].add(A[i]);
-		
+		insElement(A[i]);
 	}
 	
 	//sHash[1].printHash();
