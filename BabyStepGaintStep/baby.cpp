@@ -1,11 +1,12 @@
 #include<stdio.h>
-#include"hash_structure.h"
 #include<map>
+#include<bits/stdc++.h>
+
+using namespace std;
 
 int n,a,b;
 map<int,int> hBaby;
 
-using namespace std;
 
 unsigned long long powInt(unsigned int p,unsigned int q){
 	if(q==0)
@@ -23,22 +24,25 @@ int babyStep_gaintStep(){
 	unsigned int e = 1;
 	for(unsigned int j=0;j<m;++j){
 		hBaby.insert(pair<unsigned int,unsigned int>(e,j));
+		printf(" %d - %d\n",e,j);
 		e = (e*a)%n;
-	//	printf(" %d ",e);
 	};
 	printf("\n");
 	int factor = pow_m(a,n-m-1,n);
 	e = b;
-//	printf("\nfactor = %d",factor);	
+	printf("\nfactor = %d",factor);	
 	for(int i=0;i<m;++i){
 		
+		printf("\n %d ",e);
+
 		if(hBaby.find(e)!=hBaby.end()){
+			printf("\n index = %d",hBaby.at(e));
 			return i*m+hBaby.at(e);
 		}
 		e = (e*factor)%n;
 	}
 	
-	return NULL;
+	return -1;
 	
 }
 
@@ -46,7 +50,7 @@ int main(){
 	printf("Input: ");
 	scanf("%d %d %d",&n,&a,&b);
 	int result = babyStep_gaintStep();
-	if(result!=NULL)
+	if(result!=-1)
 		printf("\nOutput: %d",result);
 	else 
 		printf("\n*** Not result ***");
