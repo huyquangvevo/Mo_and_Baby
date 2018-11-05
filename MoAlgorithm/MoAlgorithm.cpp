@@ -166,7 +166,6 @@ void printsHash(){
 
 
 int getMode(Query preQ,Query curQ){
-//	maxMode = 0;
 	modeArr = A[curQ.left];
 	printDQuery(preQ,curQ);
 	if(preQ.left<=curQ.left)
@@ -189,7 +188,7 @@ int getMode(Query preQ,Query curQ){
 			
 //	printsHash();
 			
-		printf("\nMode: %d --- Max: %d\n",modeArr,maxMode);
+		printf("\n\tMode: %d --- Max: %d\n",modeArr,maxMode);
 	
 }
 
@@ -209,9 +208,7 @@ int main(){
 	for(int i=queries[0].left;i<=queries[0].right;i++){
 		insElement(A[i]);
 	}
-	
-	//sHash[1].printHash();
-	
+		
 	for(int i=0;i<Q-1;i++)
 		getMode(queries[i],queries[i+1]);
 						
