@@ -94,7 +94,7 @@ int main(){
 	printf("Output :\n\n");
 	
 	for(int i=0;i<q;i++){
-		printf("\tQuery %d [%3d - %-3d]: \t",i,Q[i].l,Q[i].r);
+		printf("\tQuery %-3d [%3d - %-3d]: \t",i,Q[i].l,Q[i].r);
 		printf(" %d \n",getRMQ(Q[i]));
 	}
 }
