@@ -18,8 +18,8 @@ Query Q[MAXQ];
 
 void init(){
 	
-	printf("Input: \n");
-	scanf("%d %d",&n,&q);
+//	printf("Input: \n");
+	scanf("%d",&n);
 	
 	// size of M
 	p = ceil(sqrt(n));
@@ -31,6 +31,8 @@ void init(){
 	for(int i=0;i<n;i++){
 		scanf("%d",&A[i]);	
 	}
+	
+	scanf("%d",&q);
 
 	// init Q
 	for(int i=0;i<q;i++)
@@ -85,16 +87,16 @@ int getRMQ(Query query){
 		
 	}
 	
-	return indexMin;
+	return A[indexMin];
 }
 
 int main(){
 	init();
 	preRMQ();
-	printf("Output :\n\n");
+//	printf("Output :\n\n");
 	
 	for(int i=0;i<q;i++){
-		printf("\tQuery %-3d [%3d - %-3d]: \t",i,Q[i].l,Q[i].r);
-		printf(" %d \n",getRMQ(Q[i]));
+//		printf("\tQuery %-3d [%3d - %-3d]: \t",i,Q[i].l,Q[i].r);
+		printf("%d \n",getRMQ(Q[i]));
 	}
 }

@@ -1,0 +1,113 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{vietnam}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{wrapfig}
+\usepackage{multicol}
+\usepackage{fancyhdr}
+\usepackage{fancybox}
+\usepackage{hyperref}
+\usepackage{amsmath}
+\usepackage[left=2.50cm, right=2.50cm, top=2.00cm, bottom=3.00cm]{geometry}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[LE,RO]{\thepage}
+
+\fancyhead[LO]{\small{\itshape{Tìm hiểu về} \textsf{Flex}}}
+\begin{document}
+\thispagestyle{empty}
+\thisfancypage{
+\setlength{\fboxsep}{0pt}
+\fbox}{}
+\begin{center}
+\begin{large}
+TRƯỜNG ĐẠI HỌC BÁCH KHOA HÀ NỘI
+\end{large} \\
+\begin{large}
+VIỆN CÔNG NGHỆ THÔNG TIN VÀ TRUYỀN THÔNG
+\end{large} \\
+
+\textbf{--------------------  *  ---------------------}\\[1.5cm]
+\includegraphics[scale=0.35]{12}
+\\
+\vspace{2cm}
+{\fontsize{25pt}{1}\selectfont TÌM HIỂU VỀ \textsf{FLEX}}\\[2cm]
+%{\fontsize{15pt}{1}\selectfont Lập trình Web}\\[1cm]
+\end{center}
+\hspace{3cm}
+{\fontsize{12pt}{1}
+\selectfont Sinh viên thưc hiện : } \hspace{1pt}
+\textbf{\parbox[t]{6cm}{
+\selectfont Nguyễn Quang Huy\\[0.3cm]
+\selectfont MSSV : 20151690\\[0.3cm]
+\selectfont Lớp : KSTN-CNTT-K60\\
+   }
+}\\[16pt]
+\vspace{2cm}
+\begin{center}
+{\fontsize{12pt}{1}\selectfont HÀ NỘI}\\
+{\fontsize{12pt}{1}\selectfont \today}
+\end{center}
+\newpage
+\thispagestyle{empty}
+\tableofcontents 
+\newpage
+\section{Thuật toán Mo}
+Cho một dãy số \textit{\textbf{A}} gồm \textit{\textbf{N}} phần tử. Cần thực hiện \textit{\textbf{Q}} truy vấn, mỗi truy vấn \textit{\textbf{(i,j)}} yêu cầu tìm \textit{\textbf{mode($A_i,...A_j$)}}. (Mode của một tâp hợp là giá trị xuất hiện nhiều lần nhất trong tập hợp đó). Giới hạn: \textit{\textbf{N,Q,$A_i\leq10^5$}}.
+\subsection{Thuật toán cơ bản}
+Có thể giải bài toán bằng thuật toán đơn giản như sau: \par 
+\begin{itemize}
+\item Với mỗi truy vấn, duyệt từ trái sang phải theo độ dài của câu truy vấn, đếm số lần xuất hiện của các phần tử. 
+\item Trong khi đếm thực hiện cập nhật kết quả. 
+\end{itemize}
+Code đơn giản như sau: \\[0.5cm]
+\parbox{500pt}{
+\ttfamily
+\hspace{0.5cm}void mode(1,r): \par
+\hspace{1cm} res = -1; \par 
+\hspace{1cm} for i = 1 .. r : \par 
+\hspace{1.5cm} count[A[i]] += 1; \par 
+\hspace{1.5cm} if res == -1 or count[A[i]] > count[res]: \par 
+\hspace{2cm} res = A[i];\par 
+\hspace{1cm} return res; \\[0.5cm]
+}
+
+Dễ thấy, thuật toán này có độ phức tạp
+$\mathcal{O}$\textit{\textbf{(N*Q)}}. Có 2 lí do chính khiến thuật toán này chạy chậm: 
+\begin{enumerate}
+\item Khởi tạo mảng count mỗi lần mất $\mathcal{O}$\textit{\textbf{(N)}}.
+\item Với mỗi truy vấn, phải tính lại mảng count từ đầu. 
+\end{enumerate}
+Có thể cải tiến thuật toán: \\
+Sau khi trả lời truy vấn $\mathbf{[1_1,r_1]}$, để trả lời truy vấn $\mathbf{[l_2,r_2]}$, chỉ cần thay đổi mảng đếm một cách phù hợp. Cụ thể: 
+\begin{itemize}
+\item Nếu \textit{\textbf{l$_2$ > l$_1$}}, giảm số lần xuất hiện của \textit{\textbf{A$_{l_1}$,...,A$_{{l_2}-1}$}} 
+\item Nếu \textit{\textbf{l$_2$ < l$_1$}}, tăng số lần xuất hiện của \textit{\textbf{A$_{l_2}$,...,A$_{{l_1}-1}$}}
+\item Tương tự với \textit{\textbf{r$_1$}} và \textit{\textbf{r$_2$}}.
+Để cập nhật số lần xuất hiện lớn nhất có thể dùng thêm set. \\
+Như vậy, độ phức tạp thuật toán là tổng $|\mathit{l_i - l_{i-1}}| + |r_{i} - r_{i-1}|$, nhân thêm $\mathbf{\mathcal{O}}$\textit{(\textbf{logN})} để đếm và tìm phần tử lớn nhất của mảng đếm.
+\end{itemize}
+\subsection{Thuật toán Mo}
+Thuật toán Mo là một các sắp xếp lại các truy vẫn, sao cho tổng $|l_i - l_{i-1}| + |r_i - r_{i-1}|$ không quá $\mathcal{O}\mathit{(N*\sqrt{N} + Q*\sqrt{N})}$. \par
+Thứ tự các truy vấn được định nghĩa qua hàm so sánh dưới đây: \\[0.5cm] 
+\parbox{500pt}{
+\ttfamily
+\hspace{1cm}S = sqrt(N);\par 
+\hspace{1cm}{\color{green}bool} {\color{red}cmp}(Query A, Query B)\{ \par 
+\hspace{1.5cm} {\color{blue}if}(A.l / S != B.l / S)    	
+}
+ 
+
+
+
+\newpage 
+\section{Tài liệu tham khảo}
+\begin{itemize}
+\item \textsf{Lexical Analysis with Flex}
+\item \textsf{Flex \& Bison}
+\item \href{url}{https://en.wikipedia.org/wiki/Flex\_(lexical\_analyser\_generator)}
+\item \href{url}{ftp://ftp.gnu.org/old-gnu/Manuals/flex-2.5.4/html\_mono/flex.html}
+\end{itemize}
+  
+ 
+\end{document}
