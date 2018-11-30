@@ -6,7 +6,7 @@
 
 using namespace std;
 
-const int n_max = 200200;
+const int n_max = 200001;
 int T,n,m,q,u,v,S;
 int root[n_max];
 
@@ -33,14 +33,14 @@ struct Edge {
 	}
 };
 
-vector<Query> queries;
+//vector<Query> queries;
 vector<Edge> edge;	
 
 // So sanh 2 truy van
 bool compQuery(Query A,Query B){
 	// Neu A,B khac block so sanh theo left
-	if(A.left/S !=B.left/S){
-		return A.left/S < B.left/S;
+	if( A.block != B.block){
+		return A.block<B.block;
 	}
 	// nguoc lai so sanh theo right
 	return A.right < B.right;
@@ -66,13 +66,6 @@ int find_(int node){
 		return root[node] = find_(root[node]);
 }
 
-// Ket hop 2 set, lay root co chi so nho hon lam root chung cho ca 2 set
-void union_(int u,int v){
-	if(u<v)
-		root[v] = u;
-	else
-		root[u] = v;
-}
 
 // Tim root cua 1 nut
 int brute_find(int node){
@@ -81,6 +74,16 @@ int brute_find(int node){
 	else
 		brute_find(root[node]);
 }
+
+// Ket hop 2 set, lay root co chi so nho hon lam root chung cho ca 2 set
+void union_(int u,int v){
+	if(rand()%2){
+		root[u] = v;
+	} else {
+		root[v] = u;
+	}
+}
+
 
 void printRoot(){
 	cout << "\nRoot:" << endl;
@@ -93,7 +96,7 @@ int brute_connect(int l,int r){
 	for(int i=l;i<=r;i++){
 		int ru = find_(edge[i].u);
 		int rv = find_(edge[i].v);
-	//	cout << i << " Edge: " << edge[i].u<<":" << edge[i].v << "Root: " << ru << " : " << rv << endl;
+
 		if(ru!=rv){
 			union_(ru,rv);
 			connects ++;
@@ -113,10 +116,13 @@ int brute_connectVer2(int l,int r){
 			int rv = brute_find(edge[i].v); // root dinh v
 			
 			if(ru!=rv){
-				used.push_back(make_pair(ru,edge[i].u)); // Them canh da insert
-				used.push_back(make_pair(rv,edge[i].v)); // Them canh da insert
+			//	used.push_back(make_pair(ru,edge[i].u)); // Them canh da insert
+			//	used.push_back(make_pair(rv,edge[i].v)); // Them canh da insert
+				used.push_back(make_pair(ru,rv));
 			//	root[ru] = rv;
-				union_(ru,rv); // hop 2 set con
+			//	cout << "\nConnect : " << ru << " - " << rv << endl;
+				root[ru] = rv;
+			//	union_(edge[i].u,edge[i].v); // hop 2 set con
 				con ++; // tang so thanh phan da ket noi
 			}	
 		}
@@ -127,7 +133,8 @@ int brute_connectVer2(int l,int r){
 			int u = used[i].first; // lay dinh u
 			int v = used[i].second; // lay dinh v
 			
-			root[v] = u; //khoi phuc lai root dinh u
+			root[v] = v;
+			root[u] = u; //khoi phuc lai root dinh u
 			//root[v] = v; //khoi phuc lai root dinh v
  		}
  		
@@ -147,48 +154,43 @@ int main(){
 	cin >> T ;
 	
 	for(int t=0;t<T;t++){
-	//	adj.clear();
-	//	queries.clear();
-		queries.clear();
+
+//		queries.clear();
 		edge.clear();
 		
 		cin >> n >> m >> q;
 		reset_root();
 	//	S = floor(sqrt(n));
 		S=(int)round(sqrt(m) +1.0);
-	//	cout << "\nS = " << S << endl;
 		edge.push_back(Edge(0,0));
 		int u,v;
+		vector<Query> queries;
+
 		for(int i=1;i<=m;i++){
 			cin >> u >> v;
+		//	edge[i] = Edge(u,v);
 			edge.push_back(Edge(u,v));
-		//	adj[u].push_back(v);
 		}
 		
 		
 		for(int i=0;i<q;i++){
 			cin >> u >> v;
-			queries.push_back(Query(u,v,i,0,u/S));
+		//	queries[i] = Query(u,v,i,0,(u-1)/S);
+			queries.push_back(Query(u,v,i,0,(u-1)/S));
 		}
 		
 		sort(queries.begin(),queries.end(),compQuery);
-	//	cout << "\nQueries: "<< endl;
-	//	for(int i=0;i<q;i++){
-	//		cout << queries[i].left << " - " << queries[i].right << endl;
-	//	}
-		
-	//	int inq = 0;
-		reset_root();
+
+	//	reset_root();
 		
 		int last_edge = -1;
 		int block = -1;
 		int pre_right = 0;
 		int components = n;
 		for(int inq=0;inq<q;inq++){
-			//block = Q[inq].left/S;
-			if(queries[inq].left/S == queries[inq].right/S){
+			if((queries[inq].left-1)/S == (queries[inq].right-1)/S){
+				reset_root();
 				queries[inq].ans = n - brute_connectVer2(queries[inq].left,queries[inq].right);
-			//	printRoot();
 			} else {
 				if(queries[inq].block!=block){
 					reset_root(); // reset lai root
@@ -196,6 +198,8 @@ int main(){
 					last_edge = (block+1)*S+1; // dua left ve cuoi block cua cau truy van
 					pre_right = queries[inq].right;
 					components = n;
+									//	cout << "Block: " << block << endl;
+
 					queries[inq].ans = components - brute_connect(last_edge,queries[inq].right); // insert cac canh tu last_edge den right
 					components = queries[inq].ans;
 				//	printRoot();
@@ -203,23 +207,19 @@ int main(){
 				
 				//	printRoot();
 				} else {
-				//	cout << "queries block: " << queries[inq].left << " - " << queries[inq].right << endl;
-				//	cout << "componets: " << components<<"brute_connect: "<<endl;// << brute_connect(pre_right+1,queries[inq].right) << endl;
 					queries[inq].ans = components - brute_connect(pre_right+1,queries[inq].right); // insert tu r1+1 den r2 co cap nhat root
-				//	printRoot();
+					pre_right = queries[inq].right;
+					components = queries[inq].ans;
 					queries[inq].ans -= brute_connectVer2(queries[inq].left,last_edge-1); // insert tu l2 den cuoi block cua truy van truoc do sau do thuc hien restore
-				//	printRoot();
 				}
 			}
 				
 		}
 		// Sap xep lai cac truy van theo thu tu ban dau
 		sort(queries.begin(),queries.end(),compIndex);
-	//	cout << endl << "Answers: " << endl;
 		// In ket qua
 		for(int i=0;i<q;i++)
 			cout << queries[i].ans << endl;
-		//	cout << queries[i].left << " - " << queries[i].right << " : " << queries[i].ans << endl;
 	
 	}	
 	

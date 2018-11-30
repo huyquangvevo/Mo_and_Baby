@@ -3,9 +3,12 @@ import random
 
 f = open("D:\ICT\Design and analysis of Algorithms\Project\MoAlgorithm\data_graph.txt","a+")
 
-n = 6
-m = 10
-q = 5
+n = 30
+m = 50
+q = 40
+T = 1
+f.write("%d\n" %T)
+
 f.write("%d %d %d\n" % (n,m,q))
 
 a = np.random.randint(5,size = n)
@@ -17,6 +20,7 @@ c.tolist()
 print(a)
 print("\nQueries:\n")
 print(c)
+
 
 #for i in range(n):
 #   f.write("%d " % (a[i]))
